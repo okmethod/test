@@ -4,7 +4,7 @@ import { defineConfig } from "vite";
 import fs from "fs";
 import path from "path";
 
-const githubRepo = "my-static-site";
+const githubRepoName = "thin-2d-physics-sim";
 
 const content404 = ((base: string) => `
 <!DOCTYPE html>
@@ -25,7 +25,7 @@ const content404 = ((base: string) => `
   <p>Redirecting...</p>
 </body>
 </html>
-`)(githubRepo);
+`)(githubRepoName);
 
 export default defineConfig({
   plugins: [
@@ -45,5 +45,5 @@ export default defineConfig({
     },
   ],
   // Github Pagesで公開する場合は、base にリポジトリ名を指定
-  base: `/${githubRepo}/`,
+  base: `/${githubRepoName}/`,
 });
