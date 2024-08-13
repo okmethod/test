@@ -27,7 +27,7 @@
 </script>
 
 <svelte:head>
-  <title>My Static WebSite</title>
+  <title>2D Physics Simulation</title>
 </svelte:head>
 
 <Modal />
