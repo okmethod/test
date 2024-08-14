@@ -1,28 +1,44 @@
 declare const Matter: typeof import("matter-js");
 
+// https://brm.io/matter-js/docs/classes/Engine.html
+export function initEngine(): Matter.Engine {
+  return Matter.Engine.create({
+    enableSleeping: true,
+    positionIterations: 6, // 位置の解決の反復回数(default=6)
+    velocityIterations: 4, // 速度の解決の反復回数(default=4)
+    constraintIterations: 6, // 制約の解決の反復回数(default=2)
+  });
+}
+
+// https://brm.io/matter-js/docs/classes/Runner.html
+export function initRunner(): Matter.Runner {
+  return Matter.Runner.create();
+}
+
+// https://brm.io/matter-js/docs/classes/Render.html
 export function initRender(engine: Matter.Engine, renderContainer: HTMLDivElement): Matter.Render {
-  // https://brm.io/matter-js/docs/classes/Render.html
   const render = Matter.Render.create({
     element: renderContainer,
     engine: engine,
     options: {
-      width: 300,
-      height: 400,
+      width: renderContainer.clientWidth,
+      height: renderContainer.clientHeight,
       pixelRatio: 1,
       background: "#888888",
       hasBounds: false,
       wireframes: false,
+      showSleeping: false,
     },
   });
   return render;
 }
 
+// https://brm.io/matter-js/docs/classes/Mouse.html
+// https://brm.io/matter-js/docs/classes/MouseConstraint.html
 export function initMouse(engine: Matter.Engine, render: Matter.Render): Matter.MouseConstraint {
-  // https://brm.io/matter-js/docs/classes/Mouse.html
   const mouse = Matter.Mouse.create(render.canvas);
   render.mouse = mouse;
 
-  // https://brm.io/matter-js/docs/classes/MouseConstraint.html
   const mouseConstraint = Matter.MouseConstraint.create(engine, {
     mouse: mouse,
     // マウスとボディを結ぶバネを召喚する
@@ -40,12 +56,28 @@ export function initMouse(engine: Matter.Engine, render: Matter.Render): Matter.
   return mouseConstraint;
 }
 
-export function initBodies(): Matter.Body[] {
-  // https://brm.io/matter-js/docs/classes/Bodies.html
-  // args: (x, y, width, height, options)
+// https://brm.io/matter-js/docs/classes/Bodies.html
+// args: (x, y, width, height, options)
+export function initBodies(renderContainer: HTMLDivElement): Matter.Body[] {
+  const width = renderContainer.clientWidth;
+  const height = renderContainer.clientHeight;
+
+  // 壁の作成
+  const wallThickness = 2000;
+  const walls = [
+    Matter.Bodies.rectangle(width / 2, -wallThickness / 2, width, wallThickness, { isStatic: true }),
+    Matter.Bodies.rectangle(width / 2, height + wallThickness / 2, width, wallThickness, {
+      isStatic: true,
+    }),
+    Matter.Bodies.rectangle(-wallThickness / 2, height / 2, wallThickness, height, { isStatic: true }),
+    Matter.Bodies.rectangle(width + wallThickness / 2, height / 2, wallThickness, height, {
+      isStatic: true,
+    }),
+  ];
+
   const boxA = Matter.Bodies.rectangle(150, 50, 40, 40);
   const boxB = Matter.Bodies.rectangle(180, 100, 40, 40);
   const ground = Matter.Bodies.rectangle(150, 300, 200, 60, { isStatic: true });
 
-  return [boxA, boxB, ground];
+  return [...walls, boxA, boxB, ground];
 }

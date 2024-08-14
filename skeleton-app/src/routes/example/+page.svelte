@@ -6,18 +6,18 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
   import { browser } from "$app/environment";
-  import { initBodies, initRender, initMouse } from "./initMatter";
+  import { initEngine, initRunner, initBodies, initRender, initMouse } from "./initMatter";
 
   let renderContainer: HTMLDivElement;
   let engine: Matter.Engine;
   let runner: Matter.Runner;
   let render: Matter.Render;
   onMount(() => {
-    engine = Matter.Engine.create();
-    runner = Matter.Runner.create();
+    engine = initEngine();
+    runner = initRunner();
     render = initRender(engine, renderContainer);
     const mouseConstraint = initMouse(engine, render);
-    const bodies = initBodies();
+    const bodies = initBodies(renderContainer);
     if (browser) {
       Matter.World.add(engine.world, bodies);
       Matter.World.add(engine.world, mouseConstraint);
@@ -45,6 +45,6 @@
   <div class="cContentPartStyle !ml-4">
     <span>matter-js renderContainer</span>
 
-    <div bind:this={renderContainer}></div>
+    <div bind:this={renderContainer} class="w-80 h-80"></div>
   </div>
 </div>
