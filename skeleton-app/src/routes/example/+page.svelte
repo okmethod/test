@@ -8,21 +8,50 @@
   import { browser } from "$app/environment";
   import { initEngine, initRunner, initBodies, initRender, initMouse } from "./initMatter";
 
+  function handleTouchStart() {
+    isHolding = true;
+    Matter.World.add(engine.world, mouseConstraint);
+  }
+
+  function handleTouchEnd() {
+    isHolding = false;
+    Matter.World.remove(engine.world, mouseConstraint);
+  }
+
+  function handleTouchMove(event: TouchEvent) {
+    const touch = event.touches[0];
+    const rect = renderContainer.getBoundingClientRect();
+    if (
+      touch.clientX < rect.left ||
+      touch.clientX > rect.right ||
+      touch.clientY < rect.top ||
+      touch.clientY > rect.bottom
+    ) {
+      Matter.World.remove(engine.world, mouseConstraint);
+    }
+  }
+
   let renderContainer: HTMLDivElement;
   let engine: Matter.Engine;
   let runner: Matter.Runner;
   let render: Matter.Render;
+  let mouseConstraint: Matter.MouseConstraint;
+  let isHolding = false;
   onMount(() => {
     engine = initEngine();
     runner = initRunner();
     render = initRender(engine, renderContainer);
-    const mouseConstraint = initMouse(engine, render);
+    mouseConstraint = initMouse(engine, render);
     const bodies = initBodies(renderContainer);
     if (browser) {
       Matter.World.add(engine.world, bodies);
       Matter.World.add(engine.world, mouseConstraint);
       Matter.Runner.run(runner, engine);
       Matter.Render.run(render);
+
+      renderContainer.addEventListener("touchstart", handleTouchStart);
+      renderContainer.addEventListener("touchend", handleTouchEnd);
+      renderContainer.addEventListener("touchmove", (event) => handleTouchMove(event));
     }
   });
   onDestroy(() => {
@@ -31,6 +60,10 @@
       Matter.Runner.stop(runner);
       Matter.World.clear(engine.world, false);
       Matter.Engine.clear(engine);
+
+      renderContainer.removeEventListener("touchstart", handleTouchStart);
+      renderContainer.removeEventListener("touchend", handleTouchEnd);
+      renderContainer.removeEventListener("touchmove", (event) => handleTouchMove(event));
     }
   });
 </script>
