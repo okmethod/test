@@ -6,7 +6,7 @@
 <div class="cRouteBodyStyle">
   <!-- タイトル部 -->
   <div class="cTitlePartStyle md:!mb-4">
-    <h1 class="cTitleStyle md:!text-3xl">Hello, Welcome to My Static Site !</h1>
+    <h1 class="cTitleStyle md:!text-3xl">What's the matter.js ??</h1>
   </div>
 
   <!-- コンテンツ部 -->
