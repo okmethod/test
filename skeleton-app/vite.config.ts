@@ -28,6 +28,8 @@ const content404 = ((base: string) => `
 `)(githubRepoName);
 
 export default defineConfig({
+  // Github Pagesで公開する場合は、base にリポジトリ名を指定
+  base: `/${githubRepoName}/`,
   plugins: [
     sveltekit(),
     purgeCss(),
@@ -44,6 +46,9 @@ export default defineConfig({
       },
     },
   ],
-  // Github Pagesで公開する場合は、base にリポジトリ名を指定
-  base: `/${githubRepoName}/`,
+  build: {
+    rollupOptions: {
+      external: ["matter-js"],
+    },
+  },
 });
