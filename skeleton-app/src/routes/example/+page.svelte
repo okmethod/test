@@ -1,7 +1,12 @@
+<script context="module" lang="ts">
+  // グローバル変数としてMatterを宣言
+  declare const Matter: typeof import("matter-js");
+</script>
+
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
   import { browser } from "$app/environment";
-  // import Matter from "matter-js"; 外部モジュールとして読み込んでいるので、ここではインポートしない
+  // import Matter from "matter-js"; // UMDグローバルとして読み込んでいるので、インポートしない
 
   function initBodies(): Matter.Body[] {
     // https://brm.io/matter-js/docs/classes/Bodies.html
