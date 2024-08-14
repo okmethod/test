@@ -45,6 +45,18 @@ export default defineConfig({
         console.log("404.html generated");
       },
     },
+    {
+      name: "log-version",
+      closeBundle() {
+        const versionFilePath = path.resolve(__dirname, "build/app/version.json");
+        if (fs.existsSync(versionFilePath)) {
+          const versionContent = fs.readFileSync(versionFilePath, "utf-8");
+          console.log("version.json:", versionContent);
+        } else {
+          console.log("version.json not found");
+        }
+      },
+    },
   ],
   build: {
     rollupOptions: {
