@@ -29,6 +29,7 @@
 <svelte:head>
   <title>2D Physics Simulation</title>
   <script src="https://cdn.jsdelivr.net/npm/matter-js@0.17.1/build/matter.min.js"></script>
+  <script async src="https://docs.opencv.org/4.x/opencv.js" type="text/javascript"></script>
 </svelte:head>
 
 <Modal />
