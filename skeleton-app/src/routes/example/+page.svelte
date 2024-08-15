@@ -7,7 +7,7 @@
   import { onMount, onDestroy } from "svelte";
   import { browser } from "$app/environment";
   import { initEngine, initRunner, initBodies, initRender, initMouse } from "./initMatter";
-  import { createEventHandlers, type EventHandlers } from "./createEventHandlers";
+  import { createEventHandlers, type EventHandlersMap } from "./createEventHandlers";
 
   let renderContainer: HTMLDivElement;
   let engine: Matter.Engine;
@@ -16,7 +16,7 @@
   let mouseConstraint: Matter.MouseConstraint;
   let isHolding = false;
 
-  let eventHandlers: EventHandlers;
+  let eventHandlers: EventHandlersMap;
 
   onMount(() => {
     engine = initEngine();
@@ -31,10 +31,9 @@
       Matter.Render.run(render);
 
       let eventHandlers = createEventHandlers(renderContainer, engine, mouseConstraint, { isHolding });
-
-      renderContainer.addEventListener("touchstart", eventHandlers.handleTouchStart);
-      renderContainer.addEventListener("touchend", eventHandlers.handleTouchEnd);
-      renderContainer.addEventListener("touchmove", (event) => eventHandlers.handleTouchMove(event));
+      Object.entries(eventHandlers).forEach(([event, handler]) => {
+        renderContainer.addEventListener(event, handler as EventListener);
+      });
     }
   });
   onDestroy(() => {
@@ -44,9 +43,9 @@
       Matter.World.clear(engine.world, false);
       Matter.Engine.clear(engine);
 
-      renderContainer.removeEventListener("touchstart", eventHandlers.handleTouchStart);
-      renderContainer.removeEventListener("touchend", eventHandlers.handleTouchEnd);
-      renderContainer.removeEventListener("touchmove", (event) => eventHandlers.handleTouchMove(event));
+      Object.entries(eventHandlers).forEach(([event, handler]) => {
+        renderContainer.removeEventListener(event, handler as EventListener);
+      });
     }
   });
 </script>

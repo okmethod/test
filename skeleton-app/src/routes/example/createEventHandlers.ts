@@ -1,9 +1,9 @@
 declare const Matter: typeof import("matter-js");
 
-export interface EventHandlers {
-  handleTouchStart: () => void;
-  handleTouchEnd: () => void;
-  handleTouchMove: (event: TouchEvent) => void;
+export interface EventHandlersMap {
+  touchstart: () => void;
+  touchend: () => void;
+  touchmove: (event: TouchEvent) => void;
 }
 
 export function createEventHandlers(
@@ -11,7 +11,7 @@ export function createEventHandlers(
   engine: Matter.Engine,
   mouseConstraint: Matter.MouseConstraint,
   flags: { isHolding: boolean },
-) {
+): EventHandlersMap {
   function handleTouchStart() {
     flags.isHolding = true;
     Matter.World.add(engine.world, mouseConstraint);
@@ -36,8 +36,8 @@ export function createEventHandlers(
   }
 
   return {
-    handleTouchStart,
-    handleTouchEnd,
-    handleTouchMove,
+    touchstart: handleTouchStart,
+    touchend: handleTouchEnd,
+    touchmove: handleTouchMove,
   };
 }
