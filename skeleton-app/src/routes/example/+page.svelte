@@ -18,12 +18,12 @@
 
   let eventHandlers: PointerEventHandlersMap;
 
-  onMount(async () => {
+  onMount(() => {
     engine = initEngine();
     runner = initRunner();
     render = initRender(engine, renderContainer);
     mouseConstraint = initMouse(engine, render);
-    const bodies = await initBodies(renderContainer);
+    const bodies = initBodies(renderContainer);
     if (browser) {
       Matter.World.add(engine.world, bodies);
       Matter.Runner.run(runner, engine);
