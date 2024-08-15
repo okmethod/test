@@ -7,16 +7,16 @@
   import { onMount, onDestroy } from "svelte";
   import { browser } from "$app/environment";
   import { initEngine, initRunner, initBodies, initRender, initMouse } from "./initMatter";
-  import { createEventHandlers, type EventHandlersMap } from "./createEventHandlers";
+  import { createPointerEventHandlers, type PointerEventHandlersMap } from "./createEventHandlers";
 
   let renderContainer: HTMLDivElement;
-  let engine: Matter.Engine;
-  let runner: Matter.Runner;
-  let render: Matter.Render;
-  let mouseConstraint: Matter.MouseConstraint;
+  let engine: Matter.Engine; // eslint-disable-line no-undef
+  let runner: Matter.Runner; // eslint-disable-line no-undef
+  let render: Matter.Render; // eslint-disable-line no-undef
+  let mouseConstraint: Matter.MouseConstraint; // eslint-disable-line no-undef
   let isHolding = false;
 
-  let eventHandlers: EventHandlersMap;
+  let eventHandlers: PointerEventHandlersMap;
 
   onMount(() => {
     engine = initEngine();
@@ -26,13 +26,12 @@
     const bodies = initBodies(renderContainer);
     if (browser) {
       Matter.World.add(engine.world, bodies);
-      Matter.World.add(engine.world, mouseConstraint);
       Matter.Runner.run(runner, engine);
       Matter.Render.run(render);
 
-      let eventHandlers = createEventHandlers(renderContainer, engine, mouseConstraint, { isHolding });
+      let eventHandlers = createPointerEventHandlers(engine.world, mouseConstraint, renderContainer, { isHolding });
       Object.entries(eventHandlers).forEach(([event, handler]) => {
-        renderContainer.addEventListener(event, handler as EventListener);
+        renderContainer.addEventListener(event, handler);
       });
     }
   });
@@ -44,7 +43,7 @@
       Matter.Engine.clear(engine);
 
       Object.entries(eventHandlers).forEach(([event, handler]) => {
-        renderContainer.removeEventListener(event, handler as EventListener);
+        renderContainer.removeEventListener(event, handler);
       });
     }
   });
