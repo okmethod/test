@@ -60,7 +60,7 @@ export default defineConfig({
   ],
   build: {
     rollupOptions: {
-      external: ["matter-js", "opencv"],
+      external: ["matter-js"],
     },
   },
 });
