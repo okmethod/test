@@ -7,29 +7,7 @@
   import { onMount, onDestroy } from "svelte";
   import { browser } from "$app/environment";
   import { initEngine, initRunner, initBodies, initRender, initMouse } from "./initMatter";
-
-  function handleTouchStart() {
-    isHolding = true;
-    Matter.World.add(engine.world, mouseConstraint);
-  }
-
-  function handleTouchEnd() {
-    isHolding = false;
-    Matter.World.remove(engine.world, mouseConstraint);
-  }
-
-  function handleTouchMove(event: TouchEvent) {
-    const touch = event.touches[0];
-    const rect = renderContainer.getBoundingClientRect();
-    if (
-      touch.clientX < rect.left ||
-      touch.clientX > rect.right ||
-      touch.clientY < rect.top ||
-      touch.clientY > rect.bottom
-    ) {
-      Matter.World.remove(engine.world, mouseConstraint);
-    }
-  }
+  import { createEventHandlers, type EventHandlers } from "./createEventHandlers";
 
   let renderContainer: HTMLDivElement;
   let engine: Matter.Engine;
@@ -37,6 +15,9 @@
   let render: Matter.Render;
   let mouseConstraint: Matter.MouseConstraint;
   let isHolding = false;
+
+  let eventHandlers: EventHandlers;
+
   onMount(() => {
     engine = initEngine();
     runner = initRunner();
@@ -49,9 +30,11 @@
       Matter.Runner.run(runner, engine);
       Matter.Render.run(render);
 
-      renderContainer.addEventListener("touchstart", handleTouchStart);
-      renderContainer.addEventListener("touchend", handleTouchEnd);
-      renderContainer.addEventListener("touchmove", (event) => handleTouchMove(event));
+      let eventHandlers = createEventHandlers(renderContainer, engine, mouseConstraint, { isHolding });
+
+      renderContainer.addEventListener("touchstart", eventHandlers.handleTouchStart);
+      renderContainer.addEventListener("touchend", eventHandlers.handleTouchEnd);
+      renderContainer.addEventListener("touchmove", (event) => eventHandlers.handleTouchMove(event));
     }
   });
   onDestroy(() => {
@@ -61,9 +44,9 @@
       Matter.World.clear(engine.world, false);
       Matter.Engine.clear(engine);
 
-      renderContainer.removeEventListener("touchstart", handleTouchStart);
-      renderContainer.removeEventListener("touchend", handleTouchEnd);
-      renderContainer.removeEventListener("touchmove", (event) => handleTouchMove(event));
+      renderContainer.removeEventListener("touchstart", eventHandlers.handleTouchStart);
+      renderContainer.removeEventListener("touchend", eventHandlers.handleTouchEnd);
+      renderContainer.removeEventListener("touchmove", (event) => eventHandlers.handleTouchMove(event));
     }
   });
 </script>
