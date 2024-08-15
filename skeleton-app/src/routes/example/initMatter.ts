@@ -47,7 +47,7 @@ export function initMouse(engine: Matter.Engine, render: Matter.Render): Matter.
       damping: 0, // 減衰
       length: 0,
       render: {
-        visible: true,
+        visible: true, // デバッグ時は trueにする
         lineWidth: 2,
         strokeStyle: "#00ff00",
       },
@@ -75,9 +75,33 @@ export function initBodies(renderContainer: HTMLDivElement): Matter.Body[] {
     }),
   ];
 
-  const boxA = Matter.Bodies.rectangle(150, 50, 40, 40);
-  const boxB = Matter.Bodies.rectangle(180, 100, 40, 40);
-  const ground = Matter.Bodies.rectangle(150, 300, 200, 60, { isStatic: true });
+  const boxA = Matter.Bodies.rectangle(150, 50, 40, 40, {
+    render: {
+      sprite: {
+        texture: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",
+        xScale: 1,
+        yScale: 1,
+      },
+    },
+  });
+  const boxB = Matter.Bodies.rectangle(160, 50, 40, 40, {
+    render: {
+      sprite: {
+        texture: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png",
+        xScale: 1,
+        yScale: 1,
+      },
+    },
+  });
+  const boxC = Matter.Bodies.rectangle(170, 50, 40, 40, {
+    render: {
+      sprite: {
+        texture: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png",
+        xScale: 1,
+        yScale: 1,
+      },
+    },
+  });
 
-  return [...walls, boxA, boxB, ground];
+  return [...walls, boxA, boxB, boxC];
 }
