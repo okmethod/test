@@ -1,6 +1,8 @@
 declare const Matter: typeof import("matter-js");
 import { getVerticesFromImage } from "./getVerticesFromImage";
 
+const isDevelopment = (import.meta.env.MODE as string) === "development";
+
 // https://brm.io/matter-js/docs/classes/Engine.html
 export function initEngine(): Matter.Engine {
   return Matter.Engine.create({
@@ -48,7 +50,7 @@ export function initMouse(engine: Matter.Engine, render: Matter.Render): Matter.
       damping: 0, // 減衰
       length: 0,
       render: {
-        visible: true, // デバッグ時は trueにする
+        visible: isDevelopment ? true : false,
         lineWidth: 2,
         strokeStyle: "#00ff00",
       },
