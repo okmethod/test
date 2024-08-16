@@ -1,5 +1,5 @@
 declare const Matter: typeof import("matter-js");
-import { getVerticesFromImage } from "./getVerticesFromImage";
+import { getVerticesClockwise } from "$lib/utils/getVertices";
 
 const isDevelopment = (import.meta.env.MODE as string) === "development";
 
@@ -87,7 +87,7 @@ export async function initBodies(renderContainer: HTMLDivElement): Promise<Matte
   // TODO: use poly-decomp
   const fromVertices = await Promise.all(
     imageUrls.map(async (imageUrl, index) => {
-      const vertices = await getVerticesFromImage(imageUrl);
+      const vertices = await getVerticesClockwise(imageUrl);
       return Matter.Bodies.fromVertices(120 + index * 40, 20, [vertices], {
         render: {
           sprite: {
