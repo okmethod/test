@@ -59,6 +59,6 @@
   <div class="cContentPartStyle !ml-4">
     <span>matter-js renderContainer</span>
 
-    <div bind:this={renderContainer} class="w-80 h-80"></div>
+    <div bind:this={renderContainer} class="w-80 h-80 bg-gray-300 border border-black"></div>
   </div>
 </div>

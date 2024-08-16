@@ -27,7 +27,7 @@ export function initRender(engine: Matter.Engine, renderContainer: HTMLDivElemen
       width: renderContainer.clientWidth,
       height: renderContainer.clientHeight,
       pixelRatio: 1,
-      background: "#888888",
+      background: "transparent", // ここでは透明にし、style側で指定する
       hasBounds: false,
       wireframes: false,
       showSleeping: false,
@@ -75,7 +75,12 @@ export async function initBodies(renderContainer: HTMLDivElement): Promise<Matte
     ];
   }
   const walls = _createWallConfig(width, height, 2000, 0).map((config) =>
-    Matter.Bodies.rectangle(config.x, config.y, config.w, config.h, { isStatic: true }),
+    Matter.Bodies.rectangle(config.x, config.y, config.w, config.h, {
+      isStatic: true,
+      render: {
+        visible: false,
+      },
+    }),
   );
 
   const imageUrls = [
