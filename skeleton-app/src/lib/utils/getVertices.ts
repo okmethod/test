@@ -1,7 +1,4 @@
-export interface Point {
-  x: number;
-  y: number;
-}
+import type { Point } from "$lib/types/matter";
 
 export async function getVertices(imageUrl: string, scale: number): Promise<Point[]> {
   const imageElement = await loadImage(imageUrl);

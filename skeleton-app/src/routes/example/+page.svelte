@@ -34,7 +34,9 @@
       Matter.Runner.run(runner, engine);
       Matter.Render.run(render);
 
-      const bodies = await Promise.all(imageUrls.map((url) => createPokeBody(url)));
+      const bodies = await Promise.all(
+        imageUrls.map((url, index) => createPokeBody(url, 1, { x: 100 + index * 40, y: 20 + index * 10 })),
+      );
       Matter.World.add(engine.world, bodies);
 
       let eventHandlers = createPointerEventHandlers(engine.world, mouseConstraint, renderContainer, { isHolding });
