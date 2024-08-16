@@ -66,17 +66,17 @@ export async function initBodies(renderContainer: HTMLDivElement): Promise<Matte
   const height = renderContainer.clientHeight;
 
   // 壁の作成
-  const wallThickness = 2000;
-  const walls = [
-    Matter.Bodies.rectangle(width / 2, -wallThickness / 2, width, wallThickness, { isStatic: true }),
-    Matter.Bodies.rectangle(width / 2, height + wallThickness / 2, width, wallThickness, {
-      isStatic: true,
-    }),
-    Matter.Bodies.rectangle(-wallThickness / 2, height / 2, wallThickness, height, { isStatic: true }),
-    Matter.Bodies.rectangle(width + wallThickness / 2, height / 2, wallThickness, height, {
-      isStatic: true,
-    }),
-  ];
+  function _createWallConfig(width: number, height: number, thickness: number, overlap: number) {
+    return [
+      { x: width / 2 - overlap, y: -thickness / 2, w: width + overlap * 2, h: thickness }, // 上辺
+      { x: width / 2 - overlap, y: height + thickness / 2, w: width + overlap * 2, h: thickness }, // 下辺
+      { x: -thickness / 2, y: height / 2 - overlap, w: thickness, h: height + overlap * 2 }, // 左辺
+      { x: width + thickness / 2, y: height / 2 - overlap, w: thickness, h: height + overlap * 2 }, // 右辺
+    ];
+  }
+  const walls = _createWallConfig(width, height, 2000, 0).map((config) =>
+    Matter.Bodies.rectangle(config.x, config.y, config.w, config.h, { isStatic: true }),
+  );
 
   const imageUrls = [
     "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",
@@ -90,6 +90,10 @@ export async function initBodies(renderContainer: HTMLDivElement): Promise<Matte
     imageUrls.map(async (imageUrl, index) => {
       const vertices = await getVertices(imageUrl, scale * 0.9);
       return Matter.Bodies.fromVertices(120 + index * 40, 20, [vertices], {
+        restitution: 0.2, // 反発係数
+        friction: 0.1, // 摩擦係数
+        density: 0.001, // 密度
+        // mass:  // 質量は密度と面積から自動計算される
         render: {
           sprite: {
             texture: imageUrl,
