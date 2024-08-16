@@ -40,6 +40,7 @@
       Matter.World.add(engine.world, bodies);
 
       let eventHandlers = createPointerEventHandlers(engine.world, mouseConstraint, renderContainer, { isHolding });
+      if (!eventHandlers) return;
       Object.entries(eventHandlers).forEach(([event, handler]) => {
         renderContainer.addEventListener(event, handler);
       });
@@ -53,6 +54,7 @@
       Matter.World.clear(engine.world, false);
       Matter.Engine.clear(engine);
 
+      if (!eventHandlers) return;
       Object.entries(eventHandlers).forEach(([event, handler]) => {
         renderContainer.removeEventListener(event, handler);
       });
@@ -63,11 +65,11 @@
 <div class="cRouteBodyStyle">
   <!-- タイトル部 -->
   <div class="cTitlePartStyle md:!mb-4">
-    <h1 class="cTitleStyle md:!text-3xl">Example route</h1>
+    <h1 class="cTitleStyle md:!text-3xl">ポケモン詰め放題</h1>
   </div>
 
   <!-- コンテンツ部 -->
-  <div class="cContentPartStyle !ml-4">
+  <div class="cContentPartStyle !m-4">
     <span>matter-js renderContainer</span>
 
     <div bind:this={renderContainer} class="w-80 h-80 bg-gray-300 border border-black"></div>

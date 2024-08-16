@@ -1,6 +1,9 @@
 <script lang="ts">
-  import { navigateTo } from "$lib/utils/navigation.client";
-  import { GITHUB_REPO_URL } from "$lib/constants/common";
+  import type { ContentButtonProps } from "./+page";
+
+  export let data: {
+    propsArray: Array<ContentButtonProps>;
+  };
 </script>
 
 <div class="cRouteBodyStyle">
@@ -10,15 +13,14 @@
   </div>
 
   <!-- コンテンツ部 -->
-  <div class="cContentPartStyle !ml-4">
-    <button on:click|preventDefault={() => navigateTo("/example")} class="cLinkButtonStyle md:!text-2xl">
-      次のページ
-    </button>
-    <button
-      on:click|preventDefault={() => window.open(GITHUB_REPO_URL, "_blank")}
-      class="cLinkButtonStyle md:!text-2xl"
-    >
-      リポジトリ
-    </button>
+  <div class="cContentPartStyle !m-4">
+    {#each data.propsArray as props}
+      <div class="">
+        <button on:click|preventDefault={props.onClick} class="flex items-center">
+          <img src={props.imageUrl} alt={props.alt} class="w-6 h-6 mr-2" />
+          <span class="cLinkButtonStyle md:!text-2xl">{props.title}</span>
+        </button>
+      </div>
+    {/each}
   </div>
 </div>
