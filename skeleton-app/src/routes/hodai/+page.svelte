@@ -72,14 +72,14 @@
 
 <div class="cRouteBodyStyle">
   <!-- タイトル部 -->
-  <div class="cTitlePartStyle md:!mb-4">
+  <div class="cTitlePartStyle md:!mb-2">
     <h1 class="cTitleStyle md:!text-3xl">ポケモン詰め放題</h1>
   </div>
 
   <!-- コンテンツ部 -->
-  <div class="cContentPartStyle !m-4">
+  <div class="cContentPartStyle !mt-1 !ml-4 !mr-4">
     <!-- 入力フォーム -->
-    <div class="m-8">
+    <div class="flex items-center justify-center">
       <div class="cInputFormAndMessagePartStyle">
         <span class="text-lg">ポケモン ゲットだぜ！</span>
         <form on:submit|preventDefault={spawnPokeBody}>
