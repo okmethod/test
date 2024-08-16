@@ -1,5 +1,5 @@
 declare const Matter: typeof import("matter-js");
-import { getVerticesClockwise } from "$lib/utils/getVertices";
+import { getVertices } from "$lib/utils/getVertices";
 
 const isDevelopment = (import.meta.env.MODE as string) === "development";
 
@@ -84,16 +84,17 @@ export async function initBodies(renderContainer: HTMLDivElement): Promise<Matte
     "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png",
   ];
 
-  // TODO: use poly-decomp
+  // don't use poly-decomp
+  const scale = 1;
   const fromVertices = await Promise.all(
     imageUrls.map(async (imageUrl, index) => {
-      const vertices = await getVerticesClockwise(imageUrl);
+      const vertices = await getVertices(imageUrl, scale * 0.9);
       return Matter.Bodies.fromVertices(120 + index * 40, 20, [vertices], {
         render: {
           sprite: {
             texture: imageUrl,
-            xScale: 1,
-            yScale: 1,
+            xScale: scale,
+            yScale: scale,
           },
         },
       });

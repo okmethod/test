@@ -3,12 +3,13 @@ export interface Point {
   y: number;
 }
 
-export async function getVerticesClockwise(imageUrl: string): Promise<Point[]> {
+export async function getVertices(imageUrl: string, scale: number): Promise<Point[]> {
   const imageElement = await loadImage(imageUrl);
   const imageArray = getImageArrayFromElement(imageElement);
   const vertices = getVerticesFromImageArray(imageArray, imageElement.width, imageElement.height);
   const verticesClockwise = sortVerticesClockwise(vertices);
-  return verticesClockwise;
+  const verticesScaled = scaleVertices(verticesClockwise, scale);
+  return verticesScaled;
 }
 
 async function loadImage(url: string): Promise<HTMLImageElement> {
@@ -84,4 +85,14 @@ function sortVerticesClockwise(vertices: Point[]): Point[] {
 
   verticesWithAngles.sort((a, b) => a.angle - b.angle);
   return verticesWithAngles.map((vertex) => ({ x: vertex.x, y: vertex.y }));
+}
+
+function scaleVertices(vertices: Point[], scale: number): Matter.Vector[] {
+  const centerX = vertices.reduce((sum, v) => sum + v.x, 0) / vertices.length;
+  const centerY = vertices.reduce((sum, v) => sum + v.y, 0) / vertices.length;
+
+  return vertices.map((v) => ({
+    x: centerX + (v.x - centerX) * scale,
+    y: centerY + (v.y - centerY) * scale,
+  }));
 }
