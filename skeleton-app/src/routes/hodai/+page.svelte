@@ -79,7 +79,7 @@
   <!-- コンテンツ部 -->
   <div class="cContentPartStyle !m-4">
     <!-- 入力フォーム -->
-    <div class="m-4">
+    <div class="m-8">
       <div class="cInputFormAndMessagePartStyle">
         <span class="text-lg">ポケモン ゲットだぜ！</span>
         <form on:submit|preventDefault={spawnPokeBody}>
