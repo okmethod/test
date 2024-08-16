@@ -61,7 +61,7 @@ export function initMouse(engine: Matter.Engine, render: Matter.Render): Matter.
 
 // https://brm.io/matter-js/docs/classes/Bodies.html
 // args: (x, y, width, height, options)
-export async function initBodies(renderContainer: HTMLDivElement): Promise<Matter.Body[]> {
+export async function initBodies(engine: Matter.Engine, renderContainer: HTMLDivElement): Promise<Matter.Body[]> {
   const width = renderContainer.clientWidth;
   const height = renderContainer.clientHeight;
 
@@ -84,21 +84,47 @@ export async function initBodies(renderContainer: HTMLDivElement): Promise<Matte
     "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png",
   ];
 
-  // TODO: use poly-decomp
   const fromVertices = await Promise.all(
     imageUrls.map(async (imageUrl, index) => {
       const vertices = await getVerticesClockwise(imageUrl);
-      return Matter.Bodies.fromVertices(120 + index * 40, 20, [vertices], {
+      const mainBody = Matter.Bodies.fromVertices(120 + index * 40, 20, [vertices], {
+        render: {
+          fillStyle: "#ffffff",
+          strokeStyle: "#000000",
+          lineWidth: 1,
+        },
+      });
+
+      const ghostBody = Matter.Bodies.rectangle(120 + index * 40, 20, width, height, {
         render: {
           sprite: {
             texture: imageUrl,
             xScale: 1,
             yScale: 1,
           },
+          visible: true,
+        },
+        collisionFilter: {
+          group: -1, // 衝突グループを設定して他のボディと衝突しないようにする
+          category: 0x0001, // カテゴリを設定
+          mask: 0x0000, // マスクを設定して衝突を無効にする
         },
       });
+
+      // メインボディの位置と回転を当たり判定のないボディに連動させる
+      Matter.Events.on(engine, "beforeUpdate", () => {
+        const lerp = (start: number, end: number, amt: number) => (1 - amt) * start + amt * end;
+
+        const lerpAmount = 0.9; // 補間の量（0.0〜1.0）
+
+        ghostBody.position.x = lerp(ghostBody.position.x, mainBody.position.x, lerpAmount);
+        ghostBody.position.y = lerp(ghostBody.position.y, mainBody.position.y, lerpAmount);
+        ghostBody.angle = lerp(ghostBody.angle, mainBody.angle, lerpAmount);
+      });
+
+      return [mainBody, ghostBody];
     }),
   );
 
-  return [...walls, ...fromVertices];
+  return [...walls, ...fromVertices.flat()];
 }
