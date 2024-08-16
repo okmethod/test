@@ -6,14 +6,18 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
   import { browser } from "$app/environment";
+  import Icon from "@iconify/svelte";
   import { initEngine, initRunner, initRender, initMouse, initWalls } from "$lib/utils/initMatter";
   import { createPointerEventHandlers, type PointerEventHandlersMap } from "$lib/utils/createEventHandlers";
   import { createPokeBody } from "$lib/utils/createPokeBody";
+  import { getRandomNumber } from "$lib/utils/numerics";
 
   const imageUrls = [
     "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",
     "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png",
     "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png",
+    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png",
+    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/133.png",
   ];
 
   let renderContainer: HTMLDivElement;
@@ -33,11 +37,6 @@
       Matter.World.add(engine.world, walls);
       Matter.Runner.run(runner, engine);
       Matter.Render.run(render);
-
-      const bodies = await Promise.all(
-        imageUrls.map((url, index) => createPokeBody(url, 1, { x: 100 + index * 40, y: 20 + index * 10 })),
-      );
-      Matter.World.add(engine.world, bodies);
 
       let eventHandlers = createPointerEventHandlers(engine.world, mouseConstraint, renderContainer, { isHolding });
       if (!eventHandlers) return;
@@ -60,6 +59,15 @@
       });
     }
   });
+
+  // ポケモン召喚
+  let spawnPokeIndex;
+  async function spawnPokeBody(): Promise<void> {
+    spawnPokeIndex = getRandomNumber(imageUrls.length);
+    const spawnPosX = getRandomNumber(100);
+    const body = await createPokeBody(imageUrls[spawnPokeIndex], 1, { x: 50 + spawnPosX * 2, y: 20 });
+    Matter.World.add(engine.world, [body]);
+  }
 </script>
 
 <div class="cRouteBodyStyle">
@@ -70,8 +78,23 @@
 
   <!-- コンテンツ部 -->
   <div class="cContentPartStyle !m-4">
-    <span>matter-js renderContainer</span>
+    <!-- 入力フォーム -->
+    <div class="m-4">
+      <div class="cInputFormAndMessagePartStyle">
+        <span class="text-lg">ポケモン ゲットだぜ！</span>
+        <form on:submit|preventDefault={spawnPokeBody}>
+          <button type="submit" class="cIconButtonStyle">
+            <div class="cIconDivStyle">
+              <Icon icon="mdi:pokeball" class="cIconStyle" />
+            </div>
+          </button>
+        </form>
+      </div>
+    </div>
 
-    <div bind:this={renderContainer} class="w-80 h-80 bg-gray-300 border border-black"></div>
+    <!-- Render -->
+    <div class="m-4">
+      <div bind:this={renderContainer} class="w-80 h-80 bg-gray-300 border border-black"></div>
+    </div>
   </div>
 </div>
