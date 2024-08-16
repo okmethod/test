@@ -6,28 +6,36 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
   import { browser } from "$app/environment";
-  import { initEngine, initRunner, initBodies, initRender, initMouse } from "./initMatter";
-  import { createPointerEventHandlers, type PointerEventHandlersMap } from "./createEventHandlers";
+  import { initEngine, initRunner, initRender, initMouse, initWalls } from "$lib/utils/initMatter";
+  import { createPointerEventHandlers, type PointerEventHandlersMap } from "$lib/utils/createEventHandlers";
+  import { createPokeBody } from "$lib/utils/createPokeBody";
+
+  const imageUrls = [
+    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",
+    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png",
+    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png",
+  ];
 
   let renderContainer: HTMLDivElement;
   let engine: Matter.Engine; // eslint-disable-line no-undef
   let runner: Matter.Runner; // eslint-disable-line no-undef
   let render: Matter.Render; // eslint-disable-line no-undef
   let mouseConstraint: Matter.MouseConstraint; // eslint-disable-line no-undef
-  let isHolding = false;
-
   let eventHandlers: PointerEventHandlersMap;
-
+  let isHolding = false;
   onMount(async () => {
     engine = initEngine();
     runner = initRunner();
     render = initRender(engine, renderContainer);
     mouseConstraint = initMouse(engine, render);
-    const bodies = await initBodies(renderContainer);
+    const walls = await initWalls(renderContainer);
     if (browser) {
-      Matter.World.add(engine.world, bodies);
+      Matter.World.add(engine.world, walls);
       Matter.Runner.run(runner, engine);
       Matter.Render.run(render);
+
+      const bodies = await Promise.all(imageUrls.map((url) => createPokeBody(url)));
+      Matter.World.add(engine.world, bodies);
 
       let eventHandlers = createPointerEventHandlers(engine.world, mouseConstraint, renderContainer, { isHolding });
       Object.entries(eventHandlers).forEach(([event, handler]) => {
@@ -35,6 +43,7 @@
       });
     }
   });
+
   onDestroy(() => {
     if (browser) {
       Matter.Render.stop(render);

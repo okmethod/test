@@ -1,9 +1,7 @@
 declare const Matter: typeof import("matter-js");
-import { getVertices } from "$lib/utils/getVertices";
 
 const isDevelopment = (import.meta.env.MODE as string) === "development";
 
-// https://brm.io/matter-js/docs/classes/Engine.html
 export function initEngine(): Matter.Engine {
   return Matter.Engine.create({
     enableSleeping: true,
@@ -13,12 +11,10 @@ export function initEngine(): Matter.Engine {
   });
 }
 
-// https://brm.io/matter-js/docs/classes/Runner.html
 export function initRunner(): Matter.Runner {
   return Matter.Runner.create();
 }
 
-// https://brm.io/matter-js/docs/classes/Render.html
 export function initRender(engine: Matter.Engine, renderContainer: HTMLDivElement): Matter.Render {
   const render = Matter.Render.create({
     element: renderContainer,
@@ -36,8 +32,6 @@ export function initRender(engine: Matter.Engine, renderContainer: HTMLDivElemen
   return render;
 }
 
-// https://brm.io/matter-js/docs/classes/Mouse.html
-// https://brm.io/matter-js/docs/classes/MouseConstraint.html
 export function initMouse(engine: Matter.Engine, render: Matter.Render): Matter.MouseConstraint {
   const mouse = Matter.Mouse.create(render.canvas);
   render.mouse = mouse;
@@ -59,13 +53,10 @@ export function initMouse(engine: Matter.Engine, render: Matter.Render): Matter.
   return mouseConstraint;
 }
 
-// https://brm.io/matter-js/docs/classes/Bodies.html
-// args: (x, y, width, height, options)
-export async function initBodies(renderContainer: HTMLDivElement): Promise<Matter.Body[]> {
+export async function initWalls(renderContainer: HTMLDivElement): Promise<Matter.Body[]> {
   const width = renderContainer.clientWidth;
   const height = renderContainer.clientHeight;
 
-  // 壁の作成
   function _createWallConfig(width: number, height: number, thickness: number, overlap: number) {
     return [
       { x: width / 2 - overlap, y: -thickness / 2, w: width + overlap * 2, h: thickness }, // 上辺
@@ -74,6 +65,7 @@ export async function initBodies(renderContainer: HTMLDivElement): Promise<Matte
       { x: width + thickness / 2, y: height / 2 - overlap, w: thickness, h: height + overlap * 2 }, // 右辺
     ];
   }
+
   const walls = _createWallConfig(width, height, 2000, 0).map((config) =>
     Matter.Bodies.rectangle(config.x, config.y, config.w, config.h, {
       isStatic: true,
@@ -82,33 +74,5 @@ export async function initBodies(renderContainer: HTMLDivElement): Promise<Matte
       },
     }),
   );
-
-  const imageUrls = [
-    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",
-    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png",
-    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png",
-  ];
-
-  // don't use poly-decomp
-  const scale = 1;
-  const fromVertices = await Promise.all(
-    imageUrls.map(async (imageUrl, index) => {
-      const vertices = await getVertices(imageUrl, scale * 0.9);
-      return Matter.Bodies.fromVertices(120 + index * 40, 20, [vertices], {
-        restitution: 0.2, // 反発係数
-        friction: 0.1, // 摩擦係数
-        density: 0.001, // 密度
-        // mass:  // 質量は密度と面積から自動計算される
-        render: {
-          sprite: {
-            texture: imageUrl,
-            xScale: scale,
-            yScale: scale,
-          },
-        },
-      });
-    }),
-  );
-
-  return [...walls, ...fromVertices];
+  return walls;
 }
