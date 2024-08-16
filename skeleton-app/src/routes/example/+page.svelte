@@ -1,12 +1,6 @@
 <script context="module" lang="ts">
-  // UMDグローバルとして読み込んだモジュールと型を宣言
+  // UMDグローバルとして読み込んだ Matter を宣言
   declare const Matter: typeof import("matter-js");
-  declare const decomp: (polygon: number[][]) => number[][][];
-  declare global {
-    interface Window {
-      decomp: (polygon: number[][]) => number[][][];
-    }
-  }
 </script>
 
 <script lang="ts">
@@ -29,9 +23,8 @@
     runner = initRunner();
     render = initRender(engine, renderContainer);
     mouseConstraint = initMouse(engine, render);
-    const bodies = await initBodies(engine, renderContainer);
+    const bodies = await initBodies(renderContainer);
     if (browser) {
-      window.decomp = decomp;
       Matter.World.add(engine.world, bodies);
       Matter.Runner.run(runner, engine);
       Matter.Render.run(render);
