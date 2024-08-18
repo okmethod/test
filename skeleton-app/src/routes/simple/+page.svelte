@@ -8,7 +8,7 @@
   import { browser } from "$app/environment";
   import Icon from "@iconify/svelte";
   import { initEngine, initRunner, initRender, initMouse, initWalls } from "$lib/utils/initMatter";
-  import { createPointerEventHandlers, type PointerEventHandlersMap } from "$lib/utils/createEventHandlers";
+  import { initEventHandlers } from "$lib/utils/initEventHandlers";
   import { createPokeBody } from "$lib/utils/createPokeBody";
   import { getRandomNumber } from "$lib/utils/numerics";
 
@@ -23,7 +23,7 @@
   let runner: Matter.Runner; // eslint-disable-line no-undef
   let render: Matter.Render; // eslint-disable-line no-undef
   let mouseConstraint: Matter.MouseConstraint; // eslint-disable-line no-undef
-  let eventHandlers: PointerEventHandlersMap;
+  let removeEventHandlers: () => void;
   let isHolding = false;
   onMount(async () => {
     engine = initEngine();
@@ -36,11 +36,7 @@
       Matter.Runner.run(runner, engine);
       Matter.Render.run(render);
 
-      let eventHandlers = createPointerEventHandlers(engine.world, mouseConstraint, renderContainer, { isHolding });
-      if (!eventHandlers) return;
-      Object.entries(eventHandlers).forEach(([event, handler]) => {
-        renderContainer.addEventListener(event, handler);
-      });
+      removeEventHandlers = initEventHandlers(engine.world, mouseConstraint, renderContainer, { isHolding });
     }
   });
 
@@ -51,10 +47,9 @@
       Matter.World.clear(engine.world, false);
       Matter.Engine.clear(engine);
 
-      if (!eventHandlers) return;
-      Object.entries(eventHandlers).forEach(([event, handler]) => {
-        renderContainer.removeEventListener(event, handler);
-      });
+      if (removeEventHandlers) {
+        removeEventHandlers();
+      }
     }
   });
 
