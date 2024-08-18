@@ -1,6 +1,12 @@
 <script context="module" lang="ts">
-  // UMDグローバルとして読み込んだ Matter を宣言
+  // UMDグローバルとして読み込んだモジュールと型を宣言
   declare const Matter: typeof import("matter-js");
+  declare const decomp: (polygon: number[][]) => number[][][];
+  declare global {
+    interface Window {
+      decomp: (polygon: number[][]) => number[][][];
+    }
+  }
 </script>
 
 <script lang="ts">
@@ -9,7 +15,7 @@
   import Icon from "@iconify/svelte";
   import { initMatterBase, runMatterBase, cleanupMatterBase, type MatterBase } from "$lib/utils/initMatterBase";
   import { initEventHandlers } from "$lib/utils/initEventHandlers";
-  import { createSpriteBody } from "$lib/utils/createPokeBody";
+  import { createDecompBody } from "$lib/utils/createPokeBody";
   import { getRandomNumber } from "$lib/utils/numerics";
 
   export let data: {
@@ -25,6 +31,9 @@
   onMount(() => {
     matterBase = initMatterBase(renderContainer);
     if (browser) {
+      // poly-decomp を Matter に設定
+      Matter.Common.setDecomp(decomp);
+
       runMatterBase(matterBase);
       removeEventHandlers = initEventHandlers(matterBase.engine.world, matterBase.mouseConstraint, renderContainer, {
         isHolding,
@@ -46,7 +55,7 @@
   async function spawnPokeBody(): Promise<void> {
     spawnPokeIndex = getRandomNumber(imageUrls.length);
     const spawnPosX = getRandomNumber(100);
-    const body = await createSpriteBody(imageUrls[spawnPokeIndex], 1, { x: 50 + spawnPosX * 2, y: 20 });
+    const body = await createDecompBody(imageUrls[spawnPokeIndex], 1, { x: 50 + spawnPosX * 2, y: 20 });
     Matter.Composite.add(matterBase.engine.world, [body]);
   }
 </script>
@@ -54,7 +63,7 @@
 <div class="cRouteBodyStyle">
   <!-- タイトル部 -->
   <div class="cTitlePartStyle md:!mb-2">
-    <h1 class="cTitleStyle md:!text-3xl">simple</h1>
+    <h1 class="cTitleStyle md:!text-3xl">poly-decomp</h1>
   </div>
 
   <!-- コンテンツ部 -->

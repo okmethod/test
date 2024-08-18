@@ -33,7 +33,7 @@ export default defineConfig({
   publicDir: "static",
   build: {
     rollupOptions: {
-      external: ["matter-js"],
+      external: ["matter-js", "poly-decomp"],
     },
     minify: "terser",
     terserOptions: {

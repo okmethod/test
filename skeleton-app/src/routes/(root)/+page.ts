@@ -19,6 +19,11 @@ const contents: Content[] = [
     route: "/simple",
   },
   {
+    title: "poly-decomp",
+    action: "navigate",
+    route: "/poly-decomp",
+  },
+  {
     title: "github repository",
     action: "redirect",
     route: GITHUB_REPO_URL,
