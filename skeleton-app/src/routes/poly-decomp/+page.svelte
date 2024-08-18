@@ -1,10 +1,14 @@
 <script context="module" lang="ts">
-  // UMDグローバルとして読み込んだモジュールと型を宣言
+  // UMDグローバルとして読み込んだ Matter を宣言
   declare const Matter: typeof import("matter-js");
-  declare const decomp: (polygon: number[][]) => number[][][];
-  declare global {
-    interface Window {
-      decomp: (polygon: number[][]) => number[][][];
+
+  // UMDグローバルとして読み込んでいる場合は decomp を宣言
+  if (typeof decomp !== "undefined") {
+    declare const decomp: (polygon: number[][]) => number[][][];
+    declare global {
+      interface Window {
+        decomp: (polygon: number[][]) => number[][][];
+      }
     }
   }
 </script>
@@ -32,7 +36,7 @@
     matterBase = initMatterBase(renderContainer);
     if (browser) {
       // poly-decomp を Matter に設定
-      Matter.Common.setDecomp(decomp);
+      if (typeof decomp !== "undefined") Matter.Common.setDecomp(decomp);
 
       runMatterBase(matterBase);
       removeEventHandlers = initEventHandlers(matterBase.engine.world, matterBase.mouseConstraint, renderContainer, {

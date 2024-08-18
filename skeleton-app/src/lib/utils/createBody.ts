@@ -21,7 +21,7 @@ export async function createSpriteBody(imageUrl: string, scale: number, spawnPoi
 }
 
 export async function createDecompBody(imageUrl: string, scale: number, spawnPoint: Point): Promise<Matter.Body> {
-  const vertices = await getVertices(imageUrl, scale * 0.9);
+  const vertices = await getVertices(imageUrl, scale);
   return Matter.Bodies.fromVertices(spawnPoint.x, spawnPoint.y, [vertices], {
     restitution: 0.2, // 反発係数
     friction: 0.1, // 摩擦係数
