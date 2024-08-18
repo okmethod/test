@@ -53,7 +53,7 @@ export function initMouse(engine: Matter.Engine, render: Matter.Render): Matter.
   return mouseConstraint;
 }
 
-export async function initWalls(renderContainer: HTMLDivElement): Promise<Matter.Composite> {
+export function initWalls(renderContainer: HTMLDivElement): Matter.Composite {
   const width = renderContainer.clientWidth;
   const height = renderContainer.clientHeight;
 

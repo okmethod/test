@@ -30,7 +30,7 @@
     runner = initRunner();
     render = initRender(engine, renderContainer);
     mouseConstraint = initMouse(engine, render);
-    const walls = await initWalls(renderContainer);
+    const walls = initWalls(renderContainer);
     if (browser) {
       Matter.Composite.add(engine.world, walls);
       Matter.Runner.run(runner, engine);
