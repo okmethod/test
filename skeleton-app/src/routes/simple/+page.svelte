@@ -9,7 +9,7 @@
   import Icon from "@iconify/svelte";
   import { initMatterBase, runMatterBase, cleanupMatterBase, type MatterBase } from "$lib/Initializers/initMatterBase";
   import { initEventHandlers } from "$lib/Initializers/initEventHandlers";
-  import { createSpriteBody } from "$lib/utils/createPokeBody";
+  import { createSpriteBody } from "$lib/utils/createBody";
   import { getRandomNumber } from "$lib/utils/numerics";
 
   export let data: {
