@@ -7,8 +7,8 @@
   import { onMount, onDestroy } from "svelte";
   import { browser } from "$app/environment";
   import Icon from "@iconify/svelte";
-  import { initMatterBase, runMatterBase, cleanupMatterBase, type MatterBase } from "$lib/Initializers/initMatterBase";
-  import { initEventHandlers } from "$lib/Initializers/initEventHandlers";
+  import { initMatterBase, runMatterBase, cleanupMatterBase, type MatterBase } from "$lib/initializers/initMatterBase";
+  import { initEventHandlers } from "$lib/initializers/initEventHandlers";
   import { createSpriteBody } from "$lib/utils/createBody";
   import { getRandomNumber } from "$lib/utils/numerics";
 
