@@ -60,7 +60,7 @@
     }
   });
 
-  // ポケモン召喚
+  // Create Body
   let spawnPokeIndex;
   async function spawnPokeBody(): Promise<void> {
     spawnPokeIndex = getRandomNumber(imageUrls.length);
@@ -73,7 +73,7 @@
 <div class="cRouteBodyStyle">
   <!-- タイトル部 -->
   <div class="cTitlePartStyle md:!mb-2">
-    <h1 class="cTitleStyle md:!text-3xl">sample poke</h1>
+    <h1 class="cTitleStyle md:!text-3xl">simple</h1>
   </div>
 
   <!-- コンテンツ部 -->

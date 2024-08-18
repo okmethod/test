@@ -14,9 +14,9 @@ export interface ContentButtonProps {
 
 const contents: Content[] = [
   {
-    title: "sample poke",
+    title: "simple",
     action: "navigate",
-    route: "/hodai",
+    route: "/simple",
   },
   {
     title: "github repository",
