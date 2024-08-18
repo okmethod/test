@@ -1,11 +1,12 @@
 declare const Matter: typeof import("matter-js");
 import type { Point } from "$lib/types/matter";
-import { getVertices } from "$lib/utils/getVertices";
+import { getVertices, scaleVertices } from "$lib/utils/getVertices";
 
 export async function createSpriteBody(imageUrl: string, scale: number, spawnPoint: Point): Promise<Matter.Body> {
-  const vertices = await getVertices(imageUrl, scale * 0.9);
+  const vertices = await getVertices(imageUrl);
+  const scaledVertices = scaleVertices(vertices, scale * 0.9);
   // don't use poly-decomp
-  return Matter.Bodies.fromVertices(spawnPoint.x, spawnPoint.y, [vertices], {
+  return Matter.Bodies.fromVertices(spawnPoint.x, spawnPoint.y, [scaledVertices], {
     restitution: 0.2, // 反発係数
     friction: 0.1, // 摩擦係数
     density: 0.001, // 密度
@@ -21,8 +22,9 @@ export async function createSpriteBody(imageUrl: string, scale: number, spawnPoi
 }
 
 export async function createDecompBody(imageUrl: string, scale: number, spawnPoint: Point): Promise<Matter.Body> {
-  const vertices = await getVertices(imageUrl, scale);
-  return Matter.Bodies.fromVertices(spawnPoint.x, spawnPoint.y, [vertices], {
+  const vertices = await getVertices(imageUrl);
+  const scaledVertices = scaleVertices(vertices, scale);
+  return Matter.Bodies.fromVertices(spawnPoint.x, spawnPoint.y, [scaledVertices], {
     restitution: 0.2, // 反発係数
     friction: 0.1, // 摩擦係数
     density: 0.001, // 密度

@@ -5,6 +5,7 @@
   // UMDグローバルとして読み込んでいる場合は decomp を宣言
   if (typeof decomp !== "undefined") {
     console.log("decomp is loaded");
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     declare const decomp: (polygon: number[][]) => number[][][];
     declare global {
       interface Window {
@@ -37,6 +38,7 @@
     matterBase = initMatterBase(renderContainer);
     if (browser) {
       // poly-decomp を Matter に設定
+      // eslint-disable-next-line no-undef
       if (typeof decomp !== "undefined") Matter.Common.setDecomp(decomp);
 
       runMatterBase(matterBase);
