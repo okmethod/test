@@ -2,7 +2,7 @@ declare const Matter: typeof import("matter-js");
 
 const isDevelopment = (import.meta.env.MODE as string) === "development";
 
-export interface MatterObjects {
+export interface MatterBase {
   engine: Matter.Engine;
   runner: Matter.Runner;
   render: Matter.Render;
@@ -10,7 +10,7 @@ export interface MatterObjects {
   walls: Matter.Composite;
 }
 
-export function initMatter(renderContainer: HTMLDivElement): MatterObjects {
+export function initMatterBase(renderContainer: HTMLDivElement): MatterBase {
   const engine = initEngine();
   const runner = initRunner();
   const render = initRender(engine, renderContainer);
@@ -94,4 +94,17 @@ function initWalls(renderContainer: HTMLDivElement): Matter.Composite {
   );
 
   return Matter.Composite.add(Matter.Composite.create(), walls);
+}
+
+export function runMatterBase(matterBase: MatterBase): void {
+  Matter.Composite.add(matterBase.engine.world, matterBase.walls);
+  Matter.Runner.run(matterBase.runner, matterBase.engine);
+  Matter.Render.run(matterBase.render);
+}
+
+export function cleanupMatterBase(matterBase: MatterBase): void {
+  Matter.Render.stop(matterBase.render);
+  Matter.Runner.stop(matterBase.runner);
+  Matter.World.clear(matterBase.engine.world, false);
+  Matter.Engine.clear(matterBase.engine);
 }

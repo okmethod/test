@@ -7,7 +7,7 @@
   import { onMount, onDestroy } from "svelte";
   import { browser } from "$app/environment";
   import Icon from "@iconify/svelte";
-  import { initMatter, type MatterObjects } from "$lib/utils/initMatter";
+  import { initMatterBase, runMatterBase, cleanupMatterBase, type MatterBase } from "$lib/utils/initMatterBase";
   import { initEventHandlers } from "$lib/utils/initEventHandlers";
   import { createPokeBody } from "$lib/utils/createPokeBody";
   import { getRandomNumber } from "$lib/utils/numerics";
@@ -19,18 +19,14 @@
   const imageUrls = data.imageUrls;
 
   let renderContainer: HTMLDivElement;
-  let matter: MatterObjects;
+  let matterBase: MatterBase;
   let removeEventHandlers: () => void;
   let isHolding = false;
   onMount(() => {
-    matter = initMatter(renderContainer);
-
+    matterBase = initMatterBase(renderContainer);
     if (browser) {
-      Matter.Composite.add(matter.engine.world, matter.walls);
-      Matter.Runner.run(matter.runner, matter.engine);
-      Matter.Render.run(matter.render);
-
-      removeEventHandlers = initEventHandlers(matter.engine.world, matter.mouseConstraint, renderContainer, {
+      runMatterBase(matterBase);
+      removeEventHandlers = initEventHandlers(matterBase.engine.world, matterBase.mouseConstraint, renderContainer, {
         isHolding,
       });
     }
@@ -38,11 +34,7 @@
 
   onDestroy(() => {
     if (browser) {
-      Matter.Render.stop(matter.render);
-      Matter.Runner.stop(matter.runner);
-      Matter.World.clear(matter.engine.world, false);
-      Matter.Engine.clear(matter.engine);
-
+      cleanupMatterBase(matterBase);
       if (removeEventHandlers) {
         removeEventHandlers();
       }
@@ -55,7 +47,7 @@
     spawnPokeIndex = getRandomNumber(imageUrls.length);
     const spawnPosX = getRandomNumber(100);
     const body = await createPokeBody(imageUrls[spawnPokeIndex], 1, { x: 50 + spawnPosX * 2, y: 20 });
-    Matter.Composite.add(matter.engine.world, [body]);
+    Matter.Composite.add(matterBase.engine.world, [body]);
   }
 </script>
 
