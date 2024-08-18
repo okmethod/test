@@ -12,13 +12,11 @@
   import { createPokeBody } from "$lib/utils/createPokeBody";
   import { getRandomNumber } from "$lib/utils/numerics";
 
-  const imageUrls = [
-    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",
-    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png",
-    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png",
-    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png",
-    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/133.png",
-  ];
+  export let data: {
+    imageUrls: string[];
+  };
+
+  const imageUrls = data.imageUrls;
 
   let renderContainer: HTMLDivElement;
   let engine: Matter.Engine; // eslint-disable-line no-undef
