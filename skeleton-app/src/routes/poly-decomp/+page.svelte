@@ -13,8 +13,8 @@
   import { onMount, onDestroy } from "svelte";
   import { browser } from "$app/environment";
   import Icon from "@iconify/svelte";
-  import { initMatterBase, runMatterBase, cleanupMatterBase, type MatterBase } from "$lib/utils/initMatterBase";
-  import { initEventHandlers } from "$lib/utils/initEventHandlers";
+  import { initMatterBase, runMatterBase, cleanupMatterBase, type MatterBase } from "$lib/Initializers/initMatterBase";
+  import { initEventHandlers } from "$lib/Initializers/initEventHandlers";
   import { createDecompBody } from "$lib/utils/createPokeBody";
   import { getRandomNumber } from "$lib/utils/numerics";
 
