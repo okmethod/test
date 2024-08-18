@@ -73,7 +73,7 @@
 <div class="cRouteBodyStyle">
   <!-- タイトル部 -->
   <div class="cTitlePartStyle md:!mb-2">
-    <h1 class="cTitleStyle md:!text-3xl">ポケモン詰め放題</h1>
+    <h1 class="cTitleStyle md:!text-3xl">sample poke</h1>
   </div>
 
   <!-- コンテンツ部 -->
@@ -81,7 +81,7 @@
     <!-- 入力フォーム -->
     <div class="flex items-center justify-center">
       <div class="cInputFormAndMessagePartStyle">
-        <span class="text-lg">ポケモン ゲットだぜ！</span>
+        <span class="text-lg">Create Body</span>
         <form on:submit|preventDefault={spawnPokeBody}>
           <button type="submit" class="cIconButtonStyle">
             <div class="cIconDivStyle">
