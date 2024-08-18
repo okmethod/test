@@ -16,7 +16,7 @@
   <title>2D Physics Simulation</title>
   <script src="https://cdn.jsdelivr.net/npm/matter-js@0.17.1/build/matter.min.js"></script>
   <!-- poly-decomp を読み込むと、 Matter.Bodies.fromVertices の render.sprite.texture がバグる -->
-  <script src="https://cdn.jsdelivr.net/npm/poly-decomp@0.3.0/build/decomp.min.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/poly-decomp@0.3.0/build/decomp.min.js"></script> -->
 </svelte:head>
 
 <Modal />
