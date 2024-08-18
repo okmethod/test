@@ -32,7 +32,7 @@
       };
 
       // beforeUpdateイベントのリスナーを追加
-      Matter.Events.on(matterBase.engine, "beforeUpdate", function (event) {
+      Matter.Events.on(matterBase.engine, "beforeUpdate", function () {
         const bodies = Matter.Composite.allBodies(matterBase.engine.world);
         bodies.forEach(function (body) {
           if (body.position.x < 0) {
