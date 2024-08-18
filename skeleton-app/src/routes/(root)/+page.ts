@@ -19,6 +19,11 @@ const contents: Content[] = [
     route: "/simple",
   },
   {
+    title: "area-wrap",
+    action: "navigate",
+    route: "/area-wrap",
+  },
+  {
     title: "poly-decomp",
     action: "navigate",
     route: "/poly-decomp",
