@@ -52,8 +52,15 @@
       runMatterBase(matterBase);
 
       // 四方の壁を削除＋別途地面を設置
-      Matter.Composite.add(matterBase.engine.world, [Matter.Bodies.rectangle(160, 250, 220, 20, { isStatic: true })]);
       Matter.Composite.remove(matterBase.engine.world, matterBase.walls);
+      const rad = Math.PI / 16;
+      const slopes = [
+        Matter.Bodies.rectangle(120, 40, 240, 5, { isStatic: true, angle: rad }),
+        Matter.Bodies.rectangle(200, 120, 240, 5, { isStatic: true, angle: -rad }),
+        Matter.Bodies.rectangle(120, 200, 240, 5, { isStatic: true, angle: rad }),
+        Matter.Bodies.rectangle(200, 280, 240, 5, { isStatic: true, angle: -rad }),
+      ];
+      Matter.Composite.add(matterBase.engine.world, slopes);
 
       removeEventHandlers = initEventHandlers(matterBase.engine.world, matterBase.mouseConstraint, renderContainer, {
         isHolding,
@@ -83,7 +90,7 @@
 <div class="cRouteBodyStyle">
   <!-- タイトル部 -->
   <div class="cTitlePartStyle md:!mb-2">
-    <h1 class="cTitleStyle md:!text-3xl">wrap</h1>
+    <h1 class="cTitleStyle md:!text-3xl">area-wrap</h1>
   </div>
 
   <!-- コンテンツ部 -->
