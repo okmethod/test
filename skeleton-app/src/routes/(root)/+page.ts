@@ -19,14 +19,19 @@ const contents: Content[] = [
     route: "/simple",
   },
   {
+    title: "collision-detect",
+    action: "navigate",
+    route: "/collision-detect",
+  },
+  {
     title: "area-wrap",
     action: "navigate",
     route: "/area-wrap",
   },
   {
-    title: "collision-detect",
+    title: "high-restitution",
     action: "navigate",
-    route: "/collision-detect",
+    route: "/high-restitution",
   },
   {
     title: "poly-decomp",
