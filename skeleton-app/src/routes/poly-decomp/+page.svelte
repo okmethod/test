@@ -20,7 +20,7 @@
   import { browser } from "$app/environment";
   import Icon from "@iconify/svelte";
   import { initMatterBase, runMatterBase, cleanupMatterBase, type MatterBase } from "$lib/initializers/initMatterBase";
-  import { initEventHandlers } from "$lib/initializers/initEventHandlers";
+  import { initPointerEvents } from "$lib/events/initPointerEvents";
   import { createDecompBody } from "$lib/utils/createBody";
   import { getRandomNumber } from "$lib/utils/numerics";
 
@@ -32,7 +32,7 @@
 
   let renderContainer: HTMLDivElement;
   let matterBase: MatterBase;
-  let removeEventHandlers: () => void;
+  let removePointerEvents: () => void;
   let isHolding = false;
   onMount(() => {
     matterBase = initMatterBase(renderContainer);
@@ -42,7 +42,7 @@
       if (typeof decomp !== "undefined") Matter.Common.setDecomp(decomp);
 
       runMatterBase(matterBase);
-      removeEventHandlers = initEventHandlers(matterBase.engine.world, matterBase.mouseConstraint, renderContainer, {
+      removePointerEvents = initPointerEvents(matterBase.engine.world, matterBase.mouseConstraint, renderContainer, {
         isHolding,
       });
     }
@@ -51,8 +51,8 @@
   onDestroy(() => {
     if (browser) {
       cleanupMatterBase(matterBase);
-      if (removeEventHandlers) {
-        removeEventHandlers();
+      if (removePointerEvents) {
+        removePointerEvents();
       }
     }
   });
