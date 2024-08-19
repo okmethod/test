@@ -7,6 +7,7 @@
   import { onMount, onDestroy } from "svelte";
   import { browser } from "$app/environment";
   import Icon from "@iconify/svelte";
+  import type { Point } from "$lib/types/matter";
   import { initMatterBase, runMatterBase, cleanupMatterBase, type MatterBase } from "$lib/initializers/initMatterBase";
   import { initEventHandlers } from "$lib/initializers/initEventHandlers";
   import { createSpriteBody } from "$lib/utils/createBody";
@@ -68,14 +69,20 @@
   });
 
   // Create Body
-  let spawnPokeIndex;
-  async function spawnPokeBody(): Promise<void> {
-    spawnPokeIndex = getRandomNumber(bodyTemplates.length);
-    const spawnPosX = getRandomNumber(100);
-    await _spawnSpriteBody(bodyTemplates[spawnPokeIndex]);
+  async function spawnPokeBodies(): Promise<void> {
+    const totalBodies = bodyTemplates.length * 2;
 
-    async function _spawnSpriteBody(bodyTemplate: bodyTemplate): Promise<void> {
-      const body = await createSpriteBody(bodyTemplate.imageUrl, 1, { x: 50 + spawnPosX * 2, y: 20 });
+    const pokeBodyPromises = Promise.all(
+      Array.from({ length: totalBodies }, async (_, i) => {
+        const spawnPokeIndex = i % bodyTemplates.length;
+        const spawnPosX = getRandomNumber(100); // 出現直後に消えないようにランダム化する
+        await _spawnSpriteBody(bodyTemplates[spawnPokeIndex], { x: spawnPosX * 3, y: 20 });
+      }),
+    );
+    await pokeBodyPromises;
+
+    async function _spawnSpriteBody(bodyTemplate: bodyTemplate, spawnPoint: Point): Promise<void> {
+      const body = await createSpriteBody(bodyTemplate.imageUrl, 1, spawnPoint);
       body.collisionFilter.category = bodyTemplate.category;
       console.debug(body.collisionFilter);
       Matter.Composite.add(matterBase.engine.world, [body]);
@@ -95,7 +102,7 @@
     <div class="flex items-center justify-center">
       <div class="cInputFormAndMessagePartStyle">
         <span class="text-lg">Create Body</span>
-        <form on:submit|preventDefault={spawnPokeBody}>
+        <form on:submit|preventDefault={spawnPokeBodies}>
           <button type="submit" class="cIconButtonStyle">
             <div class="cIconDivStyle">
               <Icon icon="mdi:pokeball" class="cIconStyle" />
