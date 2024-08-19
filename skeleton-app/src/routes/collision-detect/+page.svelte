@@ -10,6 +10,7 @@
   import type { Point } from "$lib/types/matter";
   import { initMatterBase, runMatterBase, cleanupMatterBase, type MatterBase } from "$lib/initializers/initMatterBase";
   import { initPointerEvents } from "$lib/events/initPointerEvents";
+  import { initCollisionEvents } from "$lib/events/initCollisionEvents";
   import { createSpriteBody } from "$lib/utils/createBody";
   import { getRandomNumber } from "$lib/utils/numerics";
   import type { bodyTemplate } from "./+page";
@@ -22,40 +23,18 @@
 
   let renderContainer: HTMLDivElement;
   let matterBase: MatterBase;
-  let removePointerEvents: () => void;
   let isHolding = false;
+  let removePointerEvents: () => void;
+  let removeCollisionEvents: () => void;
   onMount(() => {
     matterBase = initMatterBase(renderContainer);
-
-    // 衝突検知イベントの追加
-    Matter.Events.on(matterBase.engine, "collisionStart", function (event) {
-      const pairs = event.pairs;
-
-      pairs.forEach((pair) => {
-        const { bodyA, bodyB } = pair;
-
-        if (bodyA.collisionFilter.category === 0b1 || bodyB.collisionFilter.category === 0b1) {
-          //console.debug("Collision detected with wall");
-          return;
-        }
-        console.debug(
-          "Collision detected:",
-          `0b${bodyA.collisionFilter.category?.toString(2).padStart(6, "0")}`,
-          `0b${bodyB.collisionFilter.category?.toString(2).padStart(6, "0")}`,
-        );
-        // 同じカテゴリのもの同士が衝突した場合は削除する
-        if (bodyA.collisionFilter.category === bodyB.collisionFilter.category) {
-          Matter.Composite.remove(matterBase.engine.world, bodyA);
-          Matter.Composite.remove(matterBase.engine.world, bodyB);
-        }
-      });
-    });
 
     if (browser) {
       runMatterBase(matterBase);
       removePointerEvents = initPointerEvents(matterBase.engine.world, matterBase.mouseConstraint, renderContainer, {
         isHolding,
       });
+      removeCollisionEvents = initCollisionEvents(matterBase.engine);
     }
   });
 
@@ -64,6 +43,9 @@
       cleanupMatterBase(matterBase);
       if (removePointerEvents) {
         removePointerEvents();
+      }
+      if (removeCollisionEvents) {
+        removeCollisionEvents();
       }
     }
   });
@@ -82,7 +64,7 @@
     await pokeBodyPromises;
 
     async function _spawnSpriteBody(bodyTemplate: bodyTemplate, spawnPoint: Point): Promise<void> {
-      const body = await createSpriteBody(bodyTemplate.imageUrl, 1, spawnPoint);
+      const body = await createSpriteBody(bodyTemplate.imageUrl, 1.5, spawnPoint);
       body.collisionFilter.category = bodyTemplate.category;
       console.debug(body.collisionFilter);
       Matter.Composite.add(matterBase.engine.world, [body]);
