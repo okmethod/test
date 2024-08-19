@@ -4,28 +4,27 @@ export interface bodyTemplate {
 }
 
 export async function load(): Promise<{ bodyTemplates: bodyTemplate[] }> {
-  const bodyTemplates: bodyTemplate[] = [
-    {
-      imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",
-      category: 0b0000010, // カテゴリ2
-    },
-    {
-      imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png",
-      category: 0b0000100, // カテゴリ3
-    },
-    {
-      imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png",
-      category: 0b0001000, // カテゴリ4
-    },
-    {
-      imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png",
-      category: 0b0010000, // カテゴリ5
-    },
-    {
-      imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/133.png",
-      category: 0b0100000, // カテゴリ6
-    },
+  const imageUrlTemplate = (id: number) =>
+    `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+
+  // prettier-ignore
+  const symbolPokeIds = [
+    1, 4, 7,
+    152, 155, 158,
+    252, 255, 258,
+    387, 390, 393,
+    495, 498, 501,
+    650, 653, 656,
+    722, 725, 728,
+    810, 813, 816,
+    906, 909, 912,
+    25, 133, 1024,
   ];
+
+  const bodyTemplates = symbolPokeIds.map((pokeId, index) => ({
+    imageUrl: imageUrlTemplate(pokeId),
+    category: 1 << (index + 2), // カテゴリ2 以降を使う
+  }));
 
   return { bodyTemplates };
 }

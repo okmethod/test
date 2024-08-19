@@ -72,20 +72,14 @@
   async function spawnPokeBody(): Promise<void> {
     spawnPokeIndex = getRandomNumber(bodyTemplates.length);
     const spawnPosX = getRandomNumber(100);
-    const body = await createSpriteBody(bodyTemplates[spawnPokeIndex].imageUrl, 1, { x: 50 + spawnPosX * 2, y: 20 });
+    await _spawnSpriteBody(bodyTemplates[spawnPokeIndex]);
 
-    body.collisionFilter.category = bodyTemplates[spawnPokeIndex].category;
-
-    // 壁(デフォルトカテゴリ=カテゴリ1)と、同一カテゴリ同士のみと衝突する
-    // body.collisionFilter.mask = 0b1 | bodyTemplates[spawnPokeIndex].category;
-    // body.collisionFilter.group = 0; // グループのデフォルトは 0
-
-    // グループで同じことをしたい場合はこんな感じ↓
-    // body.collisionFilter.mask = 0b1
-    // body.collisionFilter.group = bodyTemplates[spawnPokeIndex].category;
-
-    console.debug(body.collisionFilter);
-    Matter.Composite.add(matterBase.engine.world, [body]);
+    async function _spawnSpriteBody(bodyTemplate: bodyTemplate): Promise<void> {
+      const body = await createSpriteBody(bodyTemplate.imageUrl, 1, { x: 50 + spawnPosX * 2, y: 20 });
+      body.collisionFilter.category = bodyTemplate.category;
+      console.debug(body.collisionFilter);
+      Matter.Composite.add(matterBase.engine.world, [body]);
+    }
   }
 </script>
 
