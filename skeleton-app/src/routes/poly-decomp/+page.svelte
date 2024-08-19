@@ -32,8 +32,8 @@
 
   let renderContainer: HTMLDivElement;
   let matterBase: MatterBase;
-  let removePointerEvents: () => void;
   let isHolding = false;
+  let removePointerEvents: () => void;
   onMount(() => {
     matterBase = initMatterBase(renderContainer);
     if (browser) {
