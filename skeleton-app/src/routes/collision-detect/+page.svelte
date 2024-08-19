@@ -25,6 +25,31 @@
   let isHolding = false;
   onMount(() => {
     matterBase = initMatterBase(renderContainer);
+
+    // 衝突検知イベントの追加
+    Matter.Events.on(matterBase.engine, "collisionStart", function (event) {
+      const pairs = event.pairs;
+
+      pairs.forEach((pair) => {
+        const { bodyA, bodyB } = pair;
+
+        if (bodyA.collisionFilter.category === 0b1 || bodyB.collisionFilter.category === 0b1) {
+          //console.debug("Collision detected with wall");
+          return;
+        }
+        console.debug(
+          "Collision detected:",
+          `0b${bodyA.collisionFilter.category?.toString(2).padStart(6, "0")}`,
+          `0b${bodyB.collisionFilter.category?.toString(2).padStart(6, "0")}`,
+        );
+        // 同じカテゴリのもの同士が衝突した場合は削除する
+        if (bodyA.collisionFilter.category === bodyB.collisionFilter.category) {
+          Matter.Composite.remove(matterBase.engine.world, bodyA);
+          Matter.Composite.remove(matterBase.engine.world, bodyB);
+        }
+      });
+    });
+
     if (browser) {
       runMatterBase(matterBase);
       removeEventHandlers = initEventHandlers(matterBase.engine.world, matterBase.mouseConstraint, renderContainer, {
@@ -49,11 +74,17 @@
     const spawnPosX = getRandomNumber(100);
     const body = await createSpriteBody(bodyTemplates[spawnPokeIndex].imageUrl, 1, { x: 50 + spawnPosX * 2, y: 20 });
 
-    // 壁(デフォルトカテゴリ=カテゴリ1)と、同一カテゴリ同士のみと衝突する
     body.collisionFilter.category = bodyTemplates[spawnPokeIndex].category;
-    body.collisionFilter.mask = 0b1 | bodyTemplates[spawnPokeIndex].category;
-    console.log(body.collisionFilter);
 
+    // 壁(デフォルトカテゴリ=カテゴリ1)と、同一カテゴリ同士のみと衝突する
+    // body.collisionFilter.mask = 0b1 | bodyTemplates[spawnPokeIndex].category;
+    // body.collisionFilter.group = 0; // グループのデフォルトは 0
+
+    // グループで同じことをしたい場合はこんな感じ↓
+    // body.collisionFilter.mask = 0b1
+    // body.collisionFilter.group = bodyTemplates[spawnPokeIndex].category;
+
+    console.debug(body.collisionFilter);
     Matter.Composite.add(matterBase.engine.world, [body]);
   }
 </script>
