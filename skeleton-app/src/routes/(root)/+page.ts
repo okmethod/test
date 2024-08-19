@@ -24,6 +24,11 @@ const contents: Content[] = [
     route: "/area-wrap",
   },
   {
+    title: "collision-detect",
+    action: "navigate",
+    route: "/collision-detect",
+  },
+  {
     title: "poly-decomp",
     action: "navigate",
     route: "/poly-decomp",
