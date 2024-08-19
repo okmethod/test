@@ -9,6 +9,7 @@
   import Icon from "@iconify/svelte";
   import { initMatterBase, runMatterBase, cleanupMatterBase, type MatterBase } from "$lib/initializers/initMatterBase";
   import { initPointerEvents } from "$lib/events/initPointerEvents";
+  import { initWrapEvents } from "$lib/events/initWrapEvents";
   import { createSpriteBody } from "$lib/utils/createBody";
   import { getRandomNumber } from "$lib/utils/numerics";
 
@@ -20,35 +21,12 @@
 
   let renderContainer: HTMLDivElement;
   let matterBase: MatterBase;
-  let removePointerEvents: () => void;
   let isHolding = false;
+  let removePointerEvents: () => void;
+  let removeWrapEvents: () => void;
   onMount(() => {
     matterBase = initMatterBase(renderContainer);
     if (browser) {
-      // ワールドの境界を設定
-      matterBase.engine.world.bounds = {
-        min: { x: 0, y: 0 },
-        max: { x: renderContainer.clientWidth, y: renderContainer.clientHeight },
-      };
-
-      // beforeUpdateイベントのリスナーを追加
-      Matter.Events.on(matterBase.engine, "beforeUpdate", function () {
-        const bodies = Matter.Composite.allBodies(matterBase.engine.world);
-        bodies.forEach(function (body) {
-          if (body.position.x < 0) {
-            Matter.Body.setPosition(body, { x: matterBase.engine.world.bounds.max.x, y: body.position.y });
-          } else if (body.position.x > matterBase.engine.world.bounds.max.x) {
-            Matter.Body.setPosition(body, { x: 0, y: body.position.y });
-          }
-
-          if (body.position.y < 0) {
-            Matter.Body.setPosition(body, { x: body.position.x, y: matterBase.engine.world.bounds.max.y });
-          } else if (body.position.y > matterBase.engine.world.bounds.max.y) {
-            Matter.Body.setPosition(body, { x: body.position.x, y: 0 });
-          }
-        });
-      });
-
       runMatterBase(matterBase);
 
       // 四方の壁を削除＋別途地面を設置
@@ -65,6 +43,7 @@
       removePointerEvents = initPointerEvents(matterBase.engine.world, matterBase.mouseConstraint, renderContainer, {
         isHolding,
       });
+      removeWrapEvents = initWrapEvents(matterBase.engine, renderContainer);
     }
   });
 
@@ -73,6 +52,9 @@
       cleanupMatterBase(matterBase);
       if (removePointerEvents) {
         removePointerEvents();
+      }
+      if (removeWrapEvents) {
+        removeWrapEvents();
       }
     }
   });
