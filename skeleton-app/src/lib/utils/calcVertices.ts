@@ -93,6 +93,10 @@ export function scaleVertices(vertices: Point[], scale: number): Point[] {
   }));
 }
 
+function isConvex(p1: Point, p2: Point, p3: Point) {
+  return (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x) >= 0;
+}
+
 export function convertToConvex(vertices: Point[]): Point[] {
   const convexVertices = vertices.slice();
 
@@ -101,16 +105,73 @@ export function convertToConvex(vertices: Point[]): Point[] {
     const p2 = convexVertices[(i + 1) % convexVertices.length];
     const p3 = convexVertices[(i + 2) % convexVertices.length];
 
-    if (!_isConvex(p1, p2, p3)) {
+    if (!isConvex(p1, p2, p3)) {
       // 凹型の頂点を削除
       convexVertices.splice((i + 1) % convexVertices.length, 1);
       i = -1; // 再度チェックするためにリセット
     }
   }
 
-  function _isConvex(p1: Point, p2: Point, p3: Point) {
-    return (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x) >= 0;
+  return convexVertices;
+}
+
+export function decomposeToConvex(vertices: Point[]): Point[][] {
+  const convexPolygons: Point[][] = [];
+  const remainingVertices = vertices.slice();
+
+  while (remainingVertices.length > 3) {
+    const earIndex = _findEar(remainingVertices);
+    if (earIndex === -1) {
+      break;
+    }
+
+    const p1 = remainingVertices[earIndex];
+    const p2 = remainingVertices[(earIndex + 1) % remainingVertices.length];
+    const p3 = remainingVertices[(earIndex + 2) % remainingVertices.length];
+
+    convexPolygons.push([p1, p2, p3]);
+    remainingVertices.splice((earIndex + 1) % remainingVertices.length, 1);
   }
 
-  return convexVertices;
+  convexPolygons.push(remainingVertices);
+  return convexPolygons;
+
+  function _findEar(vertices: Point[]): number {
+    for (let i = 0; i < vertices.length; i++) {
+      const p1 = vertices[i];
+      const p2 = vertices[(i + 1) % vertices.length];
+      const p3 = vertices[(i + 2) % vertices.length];
+
+      if (isConvex(p1, p2, p3)) {
+        let isEar = true;
+        for (let j = 0; j < vertices.length; j++) {
+          if (j !== i && j !== (i + 1) % vertices.length && j !== (i + 2) % vertices.length) {
+            if (_isPointInTriangle(vertices[j], p1, p2, p3)) {
+              isEar = false;
+              break;
+            }
+          }
+        }
+        if (isEar) {
+          return (i + 1) % vertices.length;
+        }
+      }
+    }
+    return -1;
+  }
+
+  function _isPointInTriangle(p: Point, p1: Point, p2: Point, p3: Point): boolean {
+    const d1 = _sign(p, p1, p2);
+    const d2 = _sign(p, p2, p3);
+    const d3 = _sign(p, p3, p1);
+
+    const hasNeg = d1 < 0 || d2 < 0 || d3 < 0;
+    const hasPos = d1 > 0 || d2 > 0 || d3 > 0;
+
+    return !(hasNeg && hasPos);
+
+    function _sign(p: Point, p1: Point, p2: Point): number {
+      return (p.x - p2.x) * (p1.y - p2.y) - (p1.x - p2.x) * (p.y - p2.y);
+    }
+  }
 }

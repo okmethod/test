@@ -2,6 +2,7 @@
   // UMDグローバルとして読み込んだ Matter を宣言
   declare const Matter: typeof import("matter-js");
 
+  /*
   // UMDグローバルとして読み込んでいる場合は decomp を宣言
   if (typeof decomp !== "undefined") {
     console.log("decomp is loaded");
@@ -13,6 +14,7 @@
       }
     }
   }
+  */
 </script>
 
 <script lang="ts">
@@ -38,8 +40,7 @@
     matterBase = initMatterBase(renderContainer);
     if (browser) {
       // poly-decomp を Matter に設定
-      // eslint-disable-next-line no-undef
-      if (typeof decomp !== "undefined") Matter.Common.setDecomp(decomp);
+      //if (typeof decomp !== "undefined") Matter.Common.setDecomp(decomp);
 
       runMatterBase(matterBase);
       removePointerEvents = initPointerEvents(matterBase.engine.world, matterBase.mouseConstraint, renderContainer, {
