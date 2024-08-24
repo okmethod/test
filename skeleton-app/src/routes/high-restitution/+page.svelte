@@ -25,7 +25,7 @@
   onMount(() => {
     matterBase = initMatterBase(renderContainer);
     matterBase.walls.bodies.forEach((body) => {
-      body.restitution = 1;
+      body.restitution = 0;
     });
     if (browser) {
       runMatterBase(matterBase);
@@ -46,11 +46,13 @@
 
   // Create Body
   let spawnPokeIndex;
+  let restitution = 1;
+  let scale = 1;
   async function spawnPokeBody(): Promise<void> {
     spawnPokeIndex = getRandomNumber(imageUrls.length);
     const spawnPosX = getRandomNumber(100);
-    const body = await createSpriteBody(imageUrls[spawnPokeIndex], 1, { x: 50 + spawnPosX * 2, y: 20 });
-    body.restitution = 1.2;
+    const body = await createSpriteBody(imageUrls[spawnPokeIndex], scale, { x: 50 + spawnPosX * 2, y: 20 });
+    body.restitution = restitution;
     Matter.Composite.add(matterBase.engine.world, [body]);
   }
 </script>
@@ -80,6 +82,16 @@
     <!-- Render -->
     <div class="m-4">
       <div bind:this={renderContainer} class="w-80 h-80 bg-gray-300 border border-black"></div>
+    </div>
+
+    <!-- パラメータ調整 -->
+    <div class="flex items-center justify-center mt-4">
+      <label for="restitutionInput" class="mr-2">restitution:</label>
+      <input id="restitutionInput" type="number" step="0.1" min="0" max="2" bind:value={restitution} />
+    </div>
+    <div class="flex items-center justify-center mt-4">
+      <label for="scaleInput" class="mr-2">scale:</label>
+      <input id="scaleInput" type="number" step="0.1" min="0.1" max="4" bind:value={scale} />
     </div>
   </div>
 </div>
