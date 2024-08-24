@@ -21,6 +21,7 @@
 
   let renderContainer: HTMLDivElement;
   let matterBase: MatterBase;
+  let slopes: Matter.Body[]; // eslint-disable-line no-undef
   let isHolding = false;
   let removePointerEvents: () => void;
   let removeWrapEvents: () => void;
@@ -32,12 +33,13 @@
       // 四方の壁を削除＋別途地面を設置
       Matter.Composite.remove(matterBase.engine.world, matterBase.walls);
       const rad = Math.PI / 16;
-      const slopes = [
+      slopes = [
         Matter.Bodies.rectangle(120, 40, 240, 5, { isStatic: true, angle: rad }),
         Matter.Bodies.rectangle(200, 120, 240, 5, { isStatic: true, angle: -rad }),
         Matter.Bodies.rectangle(120, 200, 240, 5, { isStatic: true, angle: rad }),
         Matter.Bodies.rectangle(200, 280, 240, 5, { isStatic: true, angle: -rad }),
       ];
+      updateSlopesFriction();
       Matter.Composite.add(matterBase.engine.world, slopes);
 
       removePointerEvents = initPointerEvents(matterBase.engine.world, matterBase.mouseConstraint, renderContainer, {
@@ -65,7 +67,16 @@
     spawnPokeIndex = getRandomNumber(imageUrls.length);
     const spawnPosX = getRandomNumber(100);
     const body = await createSpriteBody(imageUrls[spawnPokeIndex], 1, { x: 50 + spawnPosX * 2, y: 20 });
+    body.mass = 100;
     Matter.Composite.add(matterBase.engine.world, [body]);
+  }
+
+  // slopes の摩擦係数を更新
+  let friction = 0.1;
+  function updateSlopesFriction(): void {
+    slopes.forEach((slope) => {
+      slope.friction = friction;
+    });
   }
 </script>
 
@@ -94,6 +105,20 @@
     <!-- Render -->
     <div class="m-4">
       <div bind:this={renderContainer} class="w-80 h-80 bg-gray-300 border border-black"></div>
+    </div>
+
+    <!-- パラメータ調整 -->
+    <div class="flex items-center justify-center mt-4">
+      <label for="frictionInput" class="mr-2">friction:</label>
+      <input
+        id="frictionInput"
+        type="number"
+        step="0.1"
+        min="0"
+        max="10"
+        bind:value={friction}
+        on:input={updateSlopesFriction}
+      />
     </div>
   </div>
 </div>
